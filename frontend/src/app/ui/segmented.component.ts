@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core';
 
 import { Option } from '../core/options';
 
@@ -52,14 +52,14 @@ import { Option } from '../core/options';
   `],
 })
 export class SegmentedComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   @Input() options: Option[] = [];
   @Input() value = '';
   @Input() labelledBy = '';
   @Input() describedBy = '';
   @Input() wrap = false;
   @Output() valueChange = new EventEmitter<string>();
-
-  constructor(private readonly host: ElementRef<HTMLElement>) {}
 
   select(value: string): void {
     this.value = value;

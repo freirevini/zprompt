@@ -1,5 +1,5 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -31,6 +31,8 @@ const MAX_DRAFT = 8000;
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private readonly api = inject(EnhanceApi);
+
   readonly ideOptions = IDE_OPTIONS;
   readonly functionOptions = FUNCTION_OPTIONS;
   readonly scopeOptions = SCOPE_OPTIONS;
@@ -72,8 +74,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private request?: Subscription;
   private healthRequest?: Subscription;
   private copyTimer?: ReturnType<typeof setTimeout>;
-
-  constructor(private readonly api: EnhanceApi) {}
 
   ngOnInit(): void {
     this.refreshHealth();

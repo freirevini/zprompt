@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, of, throwError } from 'rxjs';
 
 import { buildMockResponse } from './mock-enhancer';
@@ -35,9 +35,7 @@ const HEADERS = new HttpHeaders({ 'Content-Type': 'application/json', 'x-zprompt
 
 @Injectable()
 export class HttpEnhanceApi extends EnhanceApi {
-  constructor(private readonly http: HttpClient) {
-    super();
-  }
+  private readonly http = inject(HttpClient);
 
   override enhance(request: EnhanceRequest): Observable<EnhanceResult> {
     return this.http.post<EnhanceResult>('/api/enhance', request, { headers: HEADERS }).pipe(
