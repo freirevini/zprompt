@@ -25,7 +25,7 @@
 | Lint / testes | Nenhum: sem ESLint, sem alvo `test`, nenhum `*.spec.ts` | `frontend/angular.json` só tem `build` e `serve` |
 | Controle de versão | Repositório git criado durante o diagnóstico: branch `main`, remoto `origin` = `github.com/freirevini/zprompt`, um único commit `c4b5aa0` com o projeto inteiro | `git log --oneline` |
 | Código-fonte | 7 arquivos, 2 512 linhas (`.ts`/`.html`/`.scss`), tudo standalone, `bootstrapApplication` | `frontend/src/**` |
-| Build de linha de base | Passa. Inicial 254,61 kB (main 219,05 kB, polyfills 33,09 kB, styles 1,59 kB); sem aviso de orçamento | `npx ng build` em 2026-11-09 |
+| Build de linha de base | Passa. Inicial 252,86 kB após a remoção de "Testar com" (254,61 kB antes); sem aviso de orçamento | `npx ng build` em Node 22.12.0, 2026-11-09 |
 | CSS compilado de `app.component.scss` | **9 456 bytes** comprimidos | `npx sass --style=compressed` |
 
 Dependências declaradas e não usadas: `@angular/animations` e `@angular/platform-browser-dynamic` (nenhum import em `src/`).
@@ -131,7 +131,7 @@ Adicionar `"engines": { "node": "^22.12.0" }` depois de `"private": true`.
 ```bash
 cd server && npm test && cd ../frontend && npx ng build
 ```
-Esperado: servidor 42 testes passando; build com os tamanhos de 0.1 (inicial 254,61 kB) e sem erro. O CLI 15 pode avisar sobre a versão do Node; aviso não bloqueia.
+Esperado: servidor 42 testes passando; build com os tamanhos de 0.1 (inicial 252,86 kB) e sem erro. O CLI 15 pode avisar sobre a versão do Node; aviso não bloqueia.
 
 - [ ] **Step 5: Commit**
 
@@ -159,7 +159,7 @@ cd frontend && npm i -D "vitest@^3.1.1"
 
 - [ ] **Step 2: Escrever `mock-cases.ts`**
 
-Exportar `MOCK_CASES` com, para cada `SAMPLES[i]` de `options.ts` (7) × `ide` ∈ {`cursor`, `antigravity`} × `autonomy` ∈ {`perguntar`, `decidir`, `diagnosticar`}, `function: 'auto'`, `scope: 'minimo'`, `preserveBehavior: true`, `skills: []` (42 casos, nome `${label}|${ide}|${autonomy}`), mais 6 extras:
+Exportar `MOCK_CASES` com, para cada um dos 7 rascunhos que a tela oferecia em "Testar com" (removida em 2026-11-09; lista inline `DRAFTS` no próprio arquivo, igual a `agent/examples/casos.json`) × `ide` ∈ {`cursor`, `antigravity`} × `autonomy` ∈ {`perguntar`, `decidir`, `diagnosticar`}, `function: 'auto'`, `scope: 'minimo'`, `preserveBehavior: true`, `skills: []` (42 casos, nome `${label}|${ide}|${autonomy}`), mais 6 extras:
 - `skills|cursor`: "Erro vago", cursor, perguntar, `skills: [{ name: 'security-review', description: 'Revisão de segurança', reason: 'o rascunho fala de login' }, { name: 'tdd-workflow', description: 'TDD', reason: 'pede correção' }]`
 - `ambicioso|antigravity`: "Projeto novo", antigravity, perguntar, `scope: 'ambicioso'`
 - `sem-preservar|cursor`: "Erro com mensagem", cursor, decidir, `preserveBehavior: false`
@@ -445,7 +445,6 @@ Esperado: `*ngIf` → `@if`, `*ngFor` → `@for`, `*ngIf="...; else skillList"` 
 
 Revisar cada `@for` e deixar exatamente:
 - `options` (segmented) → `track option.value`
-- `samples` → `track sample.label`
 - `s.selected` (skills) → `track skill.path`
 - `errorIssues`, `res.warnings`, `res.notices`, `res.enhancement.preservedLiterals`, `readRoots` → `track $index` (listas de strings, trocadas inteiras a cada resultado; podem repetir)
 
@@ -659,20 +658,26 @@ Pré-condição: `cd server && npm start` sem `.env` (Vertex desligado); `cd fro
 
 | # | Ação | Esperado | Angular 15 | Angular 20 |
 |---|---|---|---|---|
-| S1 | Abrir a tela | Topbar "Demonstração: Vertex não configurado" | | |
-| S2 | Estado inicial | "O prompt reescrito aparece aqui, pronto para colar no Cursor ou no Antigravity." | | |
-| S3 | "Erro vago" → Aprimorar | Bloco "Demonstração"; Função "Corrigir erro, detectada"; Modo "Agent"; editor com prompt; "Copiar prompt" → "Copiado" por ~2 s | | |
-| S4 | "Sem tarefa" → Aprimorar | "Nada para aprimorar ainda." | | |
-| S5 | "Já específico" → Aprimorar | "Este rascunho já está pronto para enviar." e texto do rascunho | | |
-| S6 | "Projeto novo" → Aprimorar | IDE muda para Antigravity; prompt começa com `/plan /grill-me`; instrução sobre `/plan /grill-me` visível | | |
-| S7 | Editar o prompt gerado | "Desfazer edições" aparece; clicar restaura o texto | | |
-| S8 | `Cmd+Enter` (ou `Ctrl+Enter`) no rascunho | Envia | | |
-| S9 | Colar 7 001 e depois 8 001 caracteres | Contador aparece; acima de 8 000 fica vermelho, borda vermelha, botão desabilitado | | |
-| S10 | Ligar "Incorporar skills" → "Informar pasta manualmente" → pasta inexistente → Avaliar | Formulário no topo antes do resultado; depois "Não encontrei as skills." no bloco de skills; "Seguir sem skills" remove o bloco; trocar de IDE limpa a pasta | | |
-| S11 | Parar o servidor → Aprimorar | "O servidor local não respondeu. Inicie com npm start na pasta server."; "Ver demonstração sem servidor" → demo com "O servidor local está desligado."; topbar "Servidor local desligado" | | |
-| S12 | `npx ng build` | Sem aviso de orçamento; anotar tamanhos | 254,61 kB inicial | |
-| S13 | Janela < 960 px | Painéis empilham; borda superior no resultado | | |
-| S14 | Console durante S1–S11 | Nenhum erro `NG0…` nem exceção | | |
+| S1 | Abrir a tela | Topbar "Demonstração: Vertex não configurado" | ok | |
+| S2 | Estado inicial | "O prompt reescrito aparece aqui, pronto para colar no Cursor ou no Antigravity." | ok | |
+| S3 | Digitar `o login quebra depois de um tempo, arruma` → Aprimorar | Bloco "Demonstração"; Função "Corrigir erro, detectada"; Modo "Agent"; editor com prompt; "Copiar prompt" → "Copiado" por ~2 s | ok | |
+| S4 | Digitar `oi` → Aprimorar | "Nada para aprimorar ainda." | ok | |
+| S5 | Colar o rascunho "Já específico" de `mock-cases.ts` → Aprimorar | "Este rascunho já está pronto para enviar." e texto do rascunho | ok | |
+| S6 | IDE Antigravity, digitar `quero criar um app pra controlar despesas da república` → Aprimorar | prompt começa com `/plan /grill-me`; instrução sobre `/plan /grill-me` visível | ok | |
+| S7 | Editar o prompt gerado | "Desfazer edições" aparece; clicar restaura o texto | ok | |
+| S8 | `Cmd+Enter` (ou `Ctrl+Enter`) no rascunho | Envia | ok | |
+| S9 | Colar 7 001 e depois 8 001 caracteres | Contador aparece; acima de 8 000 fica vermelho, borda vermelha, botão desabilitado | ok | |
+| S10 | Ligar "Incorporar skills" → "Informar pasta manualmente" → pasta inexistente → Avaliar | Formulário no topo antes do resultado; depois "Não encontrei as skills." no bloco de skills; "Seguir sem skills" remove o bloco; trocar de IDE limpa a pasta | ok | |
+| S11 | Parar o servidor → Aprimorar | "O servidor local não respondeu. Inicie com npm start na pasta server."; "Ver demonstração sem servidor" → demo com "O servidor local está desligado."; topbar "Servidor local desligado" | ok | |
+| S12 | `npx ng build` | Sem aviso de orçamento; anotar tamanhos | 252,86 kB inicial | |
+| S13 | Janela < 960 px | Painéis empilham; borda superior no resultado | ok | |
+| S14 | Console durante S1–S11 | Nenhum erro `NG0…` nem exceção | ok | |
+
+Execução Angular 15: 2026-11-09, Node 22.12.0, servidor sem `.env` na porta 4310 e `ng serve` na 4210 (`ZPROMPT_API_PORT=4310`), Chrome. S1–S14 ok; console sem erro nem aviso.
+
+Desvios pré-existentes (não corrigir neste plano):
+- Estado vazio ainda diz "Escolha um exemplo à esquerda ou escreva o seu rascunho." depois da remoção de "Testar com" (`app.component.html`, bloco `.empty`).
+- Topbar fica em "Servidor local desligado" se a tela abrir antes do servidor terminar de subir; corrige sozinha no primeiro pedido (`refreshHealth` após cada resultado).
 
 ## Fora do escopo (D10)
 
