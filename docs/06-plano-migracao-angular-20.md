@@ -593,6 +593,8 @@ Setup: `TestBed.createComponent(SegmentedComponent)`, `options = IDE_OPTIONS`, `
 npm test && git add frontend/src/app/ui/segmented.component.spec.ts && git commit -m "test: SegmentedComponent"
 ```
 
+Executado em 2026-11-09. `health` com corpo HTML e status 200 não é reproduzível no `HttpTestingController` (ele não faz parse de JSON); trocado pelo caso real do proxy Vite, status 500, nos testes de `enhance` e `health`.
+
 ### Tarefa 4.4: `app.component.spec.ts`
 
 **Files:**
@@ -615,6 +617,8 @@ Setup: fábrica `enhanced(overrides?)` devolvendo um `EnhanceResult` com `status
 - `warnings e notices repetidos renderizam todos os itens`: `warnings: ['w', 'w']`, `notices: ['n', 'n']` → 2 `li` em `.checks .issues` e 2 em `.notes`; nenhum erro lançado em `detectChanges()`.
 - `copiar usa a clipboard, mostra "Copiado" por 2 s e cai no fallback quando falha`: `navigator.clipboard.writeText` → `vi.fn().mockResolvedValue(undefined)`; `await copyPrompt()` → `copiedKey === 'prompt'`, botão com texto "Copiado"; `vi.advanceTimersByTime(2000)` → `null`. Depois `mockRejectedValue` e `document.execCommand = vi.fn(() => false)` → `copyFailedKey === 'prompt'`, `.copy-fail` presente.
 - `liveMessage por estado`: `UNCHANGED` → `'O rascunho já está pronto para enviar.'`; `INSUFFICIENT` → `'O rascunho não descreve uma tarefa.'`; demo → `'Prompt de demonstração pronto.'`; enhanced vertex → `'Prompt aprimorado pronto para copiar.'`; loading → `loadingText`.
+
+Executado em 2026-11-09. Achado do builder experimental (R5): com `segmented.component.spec.ts` importando valores de `options.ts`, o bundle de teste compartilha o chunk de `options.ts` entre os specs e `FUNCTION_LABEL` chega indefinido em `app.component.spec.ts` (5 falhas só na suíte completa; cada spec sozinho passa). Contorno: o spec do `SegmentedComponent` usa opções locais. Suíte completa 33/33 em 3 execuções seguidas. Se o problema voltar com novos specs, o fallback é o builder `@angular/build:karma`.
 
 - [ ] **Step 2: Rodar, confirmar 13 passando, commitar**
 

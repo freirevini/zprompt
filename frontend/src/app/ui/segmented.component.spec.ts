@@ -1,8 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { IDE_OPTIONS } from '../core/options';
+import { Option } from '../core/options';
 import { SegmentedComponent } from './segmented.component';
+
+// Opções locais: importar valores de options.ts aqui faz o builder unit-test (experimental) compartilhar
+// o chunk de options.ts com app.component.spec e deixar FUNCTION_LABEL indefinido lá.
+const IDE_OPTIONS: Option[] = [
+  { value: 'cursor', label: 'Cursor' },
+  { value: 'antigravity', label: 'Antigravity' },
+];
 
 describe('SegmentedComponent', () => {
   let fixture: ComponentFixture<SegmentedComponent>;
