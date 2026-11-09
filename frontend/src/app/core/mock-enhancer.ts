@@ -17,7 +17,7 @@ const CODE_RE = /`[^`]+`/g;
 const ERROR_RE = /\b[A-Z][A-Za-z]*(?:Error|Exception):.*?(?=\s+(?:no|na|em|in|at)\s|$)/g;
 const ANTIGRAVITY_ROUTE = '/plan /grill-me ';
 
-const SIGNALS: ReadonlyArray<[WorkFunction, RegExp]> = [
+const SIGNALS: readonly [WorkFunction, RegExp][] = [
   ['fix', /(erro|bug|quebr|falh|não funciona|nao funciona|exce[cç][aã]o|stack trace|regress|corrig|arrum|typeerror|referenceerror|exception)/i],
   ['review', /(revis|review|antes do pr|abrir o pr|pull request|\bdiff\b|minhas mudan[cç]as)/i],
   ['test', /\b(testes?|cobertura|testar|tdd)\b/i],
