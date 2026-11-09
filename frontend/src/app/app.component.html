@@ -24,114 +24,135 @@
         [(ngModel)]="draft"
         (keydown)="onDraftKeydown($event)"
       ></textarea>
-      <p id="draft-count" class="draft__count" [class.draft__count--over]="draftTooLong" *ngIf="showCounter" aria-live="polite">
-        {{ draft.length }} de {{ maxDraft }} caracteres<ng-container *ngIf="draftTooLong">. Encurte o rascunho para aprimorar.</ng-container>
+      @if (showCounter) {
+        <p id="draft-count" class="draft__count" [class.draft__count--over]="draftTooLong" aria-live="polite">
+          {{ draft.length }} de {{ maxDraft }} caracteres@if (draftTooLong) {. Encurte o rascunho para aprimorar.}
       </p>
+    }
 
-      <div class="config">
+    <div class="config">
+      <div class="field">
+        <span class="field__label" id="label-ide">IDE de destino</span>
+        <zp-segmented labelledBy="label-ide" [options]="ideOptions" [value]="ide" (valueChange)="onIde($event)"></zp-segmented>
+      </div>
+
+      <div class="field">
+        <span class="field__label" id="label-fn">Função</span>
+        <zp-segmented labelledBy="label-fn" describedBy="hint-fn" [wrap]="true" [options]="functionOptions" [value]="fn" (valueChange)="onFunction($event)"></zp-segmented>
+        <span class="field__hint field__hint--wide" id="hint-fn">{{ functionHint }}</span>
+      </div>
+
+      <div class="field-row">
         <div class="field">
-          <span class="field__label" id="label-ide">IDE de destino</span>
-          <zp-segmented labelledBy="label-ide" [options]="ideOptions" [value]="ide" (valueChange)="onIde($event)"></zp-segmented>
+          <span class="field__label" id="label-scope">Escopo</span>
+          <zp-segmented labelledBy="label-scope" describedBy="hint-scope" [options]="scopeOptions" [value]="scope" (valueChange)="onScope($event)"></zp-segmented>
+          <span class="field__hint" id="hint-scope">{{ scopeHint }}</span>
         </div>
-
         <div class="field">
-          <span class="field__label" id="label-fn">Função</span>
-          <zp-segmented labelledBy="label-fn" describedBy="hint-fn" [wrap]="true" [options]="functionOptions" [value]="fn" (valueChange)="onFunction($event)"></zp-segmented>
-          <span class="field__hint field__hint--wide" id="hint-fn">{{ functionHint }}</span>
+          <span class="field__label" id="label-autonomy">Dúvidas</span>
+          <zp-segmented labelledBy="label-autonomy" describedBy="hint-autonomy" [options]="autonomyOptions" [value]="autonomy" (valueChange)="onAutonomy($event)"></zp-segmented>
+          <span class="field__hint" id="hint-autonomy">{{ autonomyHint }}</span>
         </div>
+      </div>
 
-        <div class="field-row">
-          <div class="field">
-            <span class="field__label" id="label-scope">Escopo</span>
-            <zp-segmented labelledBy="label-scope" describedBy="hint-scope" [options]="scopeOptions" [value]="scope" (valueChange)="onScope($event)"></zp-segmented>
-            <span class="field__hint" id="hint-scope">{{ scopeHint }}</span>
-          </div>
-          <div class="field">
-            <span class="field__label" id="label-autonomy">Dúvidas</span>
-            <zp-segmented labelledBy="label-autonomy" describedBy="hint-autonomy" [options]="autonomyOptions" [value]="autonomy" (valueChange)="onAutonomy($event)"></zp-segmented>
-            <span class="field__hint" id="hint-autonomy">{{ autonomyHint }}</span>
-          </div>
-        </div>
+      <div class="switches">
+        <label class="switch switch--described">
+          <input type="checkbox" role="switch" class="switch__input" aria-describedby="preserve-hint" [(ngModel)]="preserveBehavior">
+          <span class="switch__track" aria-hidden="true"></span>
+          <span class="switch__text">
+            Preservar comportamento existente
+            <span class="switch__hint" id="preserve-hint">{{ preserveHint }}</span>
+          </span>
+        </label>
 
-        <div class="switches">
+        <div>
           <label class="switch switch--described">
-            <input type="checkbox" role="switch" class="switch__input" aria-describedby="preserve-hint" [(ngModel)]="preserveBehavior">
+            <input type="checkbox" role="switch" class="switch__input" aria-describedby="skills-hint" [(ngModel)]="useSkills">
             <span class="switch__track" aria-hidden="true"></span>
             <span class="switch__text">
-              Preservar comportamento existente
-              <span class="switch__hint" id="preserve-hint">{{ preserveHint }}</span>
+              Incorporar skills instaladas
+              <span class="switch__hint" id="skills-hint">
+                @if (!manualPath) {Procura skills em {{ skillFolders }} e inclui no prompt as que servem para este pedido.}
+                @if (manualPath) {Usando a pasta informada: <code class="path">{{ manualPath }}</code>}
+              </span>
             </span>
           </label>
-
-          <div>
-            <label class="switch switch--described">
-              <input type="checkbox" role="switch" class="switch__input" aria-describedby="skills-hint" [(ngModel)]="useSkills">
-              <span class="switch__track" aria-hidden="true"></span>
-              <span class="switch__text">
-                Incorporar skills instaladas
-                <span class="switch__hint" id="skills-hint">
-                  <ng-container *ngIf="!manualPath">Procura skills em {{ skillFolders }} e inclui no prompt as que servem para este pedido.</ng-container>
-                  <ng-container *ngIf="manualPath">Usando a pasta informada: <code class="path">{{ manualPath }}</code></ng-container>
-                </span>
-              </span>
-            </label>
-            <div class="switch__links" *ngIf="useSkills">
+          @if (useSkills) {
+            <div class="switch__links">
               <button type="button" class="link" (click)="openPathForm()">{{ manualPath ? 'Trocar pasta' : 'Informar pasta manualmente' }}</button>
-              <button type="button" class="link" *ngIf="manualPath" (click)="useAutomaticDetection()">Detectar automaticamente</button>
+              @if (manualPath) {
+                <button type="button" class="link" (click)="useAutomaticDetection()">Detectar automaticamente</button>
+              }
             </div>
-          </div>
+          }
         </div>
       </div>
+    </div>
 
-      <div class="submit">
-        <button type="button" class="btn btn--primary" [disabled]="!canSubmit" (click)="enhance()">
-          {{ state === 'loading' ? 'Aprimorando' : 'Aprimorar prompt' }}
-        </button>
-        <span class="submit__keys" aria-hidden="true"><kbd>{{ modKey }}</kbd><kbd>Enter</kbd></span>
-      </div>
-    </section>
+    <div class="submit">
+      <button type="button" class="btn btn--primary" [disabled]="!canSubmit" (click)="enhance()">
+        {{ state === 'loading' ? 'Aprimorando' : 'Aprimorar prompt' }}
+      </button>
+      <span class="submit__keys" aria-hidden="true"><kbd>{{ modKey }}</kbd><kbd>Enter</kbd></span>
+    </div>
+  </section>
 
-    <!-- Resultado -->
-    <section class="pane pane--result" aria-labelledby="result-title" [attr.aria-busy]="state === 'loading'">
-      <div class="progress" *ngIf="state === 'loading'" aria-hidden="true"></div>
-      <p class="sr-only" aria-live="polite">{{ liveMessage }}</p>
+  <!-- Resultado -->
+  <section class="pane pane--result" aria-labelledby="result-title" [attr.aria-busy]="state === 'loading'">
+    @if (state === 'loading') {
+      <div class="progress" aria-hidden="true"></div>
+    }
+    <p class="sr-only" aria-live="polite">{{ liveMessage }}</p>
 
-      <div class="pane__head pane__head--row">
-        <h2 id="result-title" class="pane__title">Prompt aprimorado</h2>
-      </div>
+    <div class="pane__head pane__head--row">
+      <h2 id="result-title" class="pane__title">Prompt aprimorado</h2>
+    </div>
 
-      <!-- Pasta das skills, aberta antes de qualquer resultado -->
-      <ng-container *ngIf="pathFormPlacement === 'top'">
-        <ng-container *ngTemplateOutlet="pathForm"></ng-container>
-      </ng-container>
+    <!-- Pasta das skills, aberta antes de qualquer resultado -->
+    @if (pathFormPlacement === 'top') {
+      <ng-container *ngTemplateOutlet="pathForm"></ng-container>
+    }
 
-      <!-- Vazio -->
-      <div class="empty" *ngIf="state === 'idle' && !pathFormOpen">
+    <!-- Vazio -->
+    @if (state === 'idle' && !pathFormOpen) {
+      <div class="empty">
         <p class="empty__lead">O prompt reescrito aparece aqui, pronto para colar no Cursor ou no Antigravity.</p>
         <p class="empty__text">Escolha um exemplo à esquerda ou escreva o seu rascunho.</p>
       </div>
+    }
 
-      <!-- Carregando -->
-      <div class="empty" *ngIf="state === 'loading'">
+    <!-- Carregando -->
+    @if (state === 'loading') {
+      <div class="empty">
         <p class="empty__lead">{{ loadingText }}</p>
       </div>
+    }
 
-      <!-- Erro -->
-      <div class="notice notice--error" *ngIf="state === 'error' && !pathFormOpen" role="alert">
+    <!-- Erro -->
+    @if (state === 'error' && !pathFormOpen) {
+      <div class="notice notice--error" role="alert">
         <p class="notice__title">{{ errorTitle }}</p>
         <p class="notice__text">{{ errorMessage }}</p>
-        <ul class="issues" *ngIf="errorIssues.length">
-          <li *ngFor="let issue of errorIssues">{{ issue }}</li>
-        </ul>
+        @if (errorIssues.length) {
+          <ul class="issues">
+            @for (issue of errorIssues; track $index) {
+              <li>{{ issue }}</li>
+            }
+          </ul>
+        }
         <div class="actions">
           <button type="button" class="btn btn--quiet" (click)="enhance()">Tentar de novo</button>
-          <button type="button" class="btn btn--quiet" *ngIf="errorCode === 'SERVER_OFFLINE'" (click)="runDemo()">Ver demonstração sem servidor</button>
+          @if (errorCode === 'SERVER_OFFLINE') {
+            <button type="button" class="btn btn--quiet" (click)="runDemo()">Ver demonstração sem servidor</button>
+          }
         </div>
       </div>
+    }
 
-      <ng-container *ngIf="state === 'done' && result as res">
-        <!-- Demonstração: resultado de regras fixas, não do agente -->
-        <div class="demo reveal" *ngIf="isDemo">
+    @if (state === 'done' && result; as res) {
+      <!-- Demonstração: resultado de regras fixas, não do agente -->
+      @if (isDemo) {
+        <div class="demo reveal">
           <p class="demo__title">Demonstração</p>
           <p class="demo__text">
             {{ res.demoReason }} Este resultado vem de regras fixas no navegador, não do agente.
@@ -139,154 +160,189 @@
             <code>gcloud auth application-default login</code> e reinicie o servidor.
           </p>
         </div>
-
-        <!-- Sem tarefa -->
-        <div class="notice reveal" *ngIf="res.enhancement.status === 'INSUFFICIENT'">
+      }
+      <!-- Sem tarefa -->
+      @if (res.enhancement.status === 'INSUFFICIENT') {
+        <div class="notice reveal">
           <p class="notice__title">Nada para aprimorar ainda.</p>
           <p class="notice__text">{{ res.enhancement.reason }}</p>
         </div>
-
-        <!-- Já pronto -->
-        <div class="reveal" *ngIf="res.enhancement.status === 'UNCHANGED'">
+      }
+      <!-- Já pronto -->
+      @if (res.enhancement.status === 'UNCHANGED') {
+        <div class="reveal">
           <div class="notice">
             <p class="notice__title">Este rascunho já está pronto para enviar.</p>
             <p class="notice__text">{{ res.enhancement.reason }}</p>
           </div>
-          <div class="instruction" *ngIf="res.enhancement.modeInstruction">
-            <span class="instruction__mark" aria-hidden="true"></span>
-            <p>{{ res.enhancement.modeInstruction }}</p>
-          </div>
+          @if (res.enhancement.modeInstruction) {
+            <div class="instruction">
+              <span class="instruction__mark" aria-hidden="true"></span>
+              <p>{{ res.enhancement.modeInstruction }}</p>
+            </div>
+          }
           <div class="document document--plain">
             <p class="document__text">{{ res.enhancement.prompt }}</p>
           </div>
           <div class="actions">
             <button type="button" class="btn btn--primary" (click)="copyPrompt()">{{ copiedKey === 'prompt' ? 'Copiado' : 'Copiar prompt' }}</button>
           </div>
-          <p class="copy-fail" *ngIf="copyFailedKey === 'prompt'" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
+          @if (copyFailedKey === 'prompt') {
+            <p class="copy-fail" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
+          }
         </div>
-
-        <!-- Aprimorado -->
-        <div class="reveal" *ngIf="res.enhancement.status === 'ENHANCED'">
+      }
+      <!-- Aprimorado -->
+      @if (res.enhancement.status === 'ENHANCED') {
+        <div class="reveal">
           <div class="meta">
             <span class="meta__item">
               <span class="meta__key">Função</span>
-              {{ functionLabel[res.enhancement.detectedFunction] }}<span class="meta__soft" *ngIf="res.enhancement.functionSource === 'detected'">, detectada</span>
-            </span>
-            <span class="meta__item">
-              <span class="meta__key">Modo</span>
-              {{ modeLabel[res.enhancement.recommendedMode] }}
-            </span>
-          </div>
-
-          <div class="instruction" *ngIf="res.enhancement.modeInstruction">
+              {{ functionLabel[res.enhancement.detectedFunction] }}@if (res.enhancement.functionSource === 'detected') {<span class="meta__soft">, detectada</span>}
+          </span>
+          <span class="meta__item">
+            <span class="meta__key">Modo</span>
+            {{ modeLabel[res.enhancement.recommendedMode] }}
+          </span>
+        </div>
+        @if (res.enhancement.modeInstruction) {
+          <div class="instruction">
             <span class="instruction__mark" aria-hidden="true"></span>
             <p>{{ res.enhancement.modeInstruction }}</p>
           </div>
-          <div class="instruction" *ngIf="res.enhancement.routedToPlanning && sentIde === 'antigravity'">
+        }
+        @if (res.enhancement.routedToPlanning && sentIde === 'antigravity') {
+          <div class="instruction">
             <span class="instruction__mark" aria-hidden="true"></span>
             <p>O prompt começa com <code>/plan /grill-me</code>, que abre o planejamento com entrevista no Antigravity.</p>
           </div>
-
-          <div class="document">
-            <label class="sr-only" for="output">Prompt aprimorado, editável</label>
-            <textarea
-              id="output"
-              class="document__editor"
-              spellcheck="false"
-              [ngModel]="editedPrompt"
-              (ngModelChange)="onPromptEdit($event)"
-            ></textarea>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn--primary" (click)="copyPrompt()">{{ copiedKey === 'prompt' ? 'Copiado' : 'Copiar prompt' }}</button>
-            <button type="button" class="btn btn--quiet" *ngIf="isEdited" (click)="restorePrompt()">Desfazer edições</button>
-          </div>
-          <p class="copy-fail" *ngIf="copyFailedKey === 'prompt'" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
-
-          <div class="checks" *ngIf="res.warnings.length">
+        }
+        <div class="document">
+          <label class="sr-only" for="output">Prompt aprimorado, editável</label>
+          <textarea
+            id="output"
+            class="document__editor"
+            spellcheck="false"
+            [ngModel]="editedPrompt"
+            (ngModelChange)="onPromptEdit($event)"
+          ></textarea>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn--primary" (click)="copyPrompt()">{{ copiedKey === 'prompt' ? 'Copiado' : 'Copiar prompt' }}</button>
+          @if (isEdited) {
+            <button type="button" class="btn btn--quiet" (click)="restorePrompt()">Desfazer edições</button>
+          }
+        </div>
+        @if (copyFailedKey === 'prompt') {
+          <p class="copy-fail" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
+        }
+        @if (res.warnings.length) {
+          <div class="checks">
             <p class="checks__title">Revise antes de enviar</p>
             <ul class="issues">
-              <li *ngFor="let warning of res.warnings">{{ warning }}</li>
+              @for (warning of res.warnings; track $index) {
+                <li>{{ warning }}</li>
+              }
             </ul>
           </div>
-
-          <div class="details" *ngIf="res.enhancement.preservedLiterals.length">
+        }
+        @if (res.enhancement.preservedLiterals.length) {
+          <div class="details">
             <div class="details__block">
               <h3 class="details__title">Mantido exatamente como você escreveu</h3>
               <div class="literals">
-                <code *ngFor="let literal of res.enhancement.preservedLiterals" class="literal">{{ literal }}</code>
+                @for (literal of res.enhancement.preservedLiterals; track $index) {
+                  <code class="literal">{{ literal }}</code>
+                }
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Avisos do pipeline: segredos retirados, skills não lidas -->
-        <ul class="notes" *ngIf="res.notices.length">
-          <li *ngFor="let note of res.notices">{{ note }}</li>
-        </ul>
-
-        <!-- Skills -->
-        <div class="details reveal" *ngIf="showSkills && res.skills as s">
-          <div class="details__block">
-            <div class="details__bar">
-              <h3 class="details__title">Skills incorporadas</h3>
-              <button type="button" class="btn btn--quiet btn--small" *ngIf="s.selected.length && pathFormPlacement !== 'skills'" (click)="copySkills(s.selected)">
+        }
+      </div>
+    }
+    <!-- Avisos do pipeline: segredos retirados, skills não lidas -->
+    @if (res.notices.length) {
+      <ul class="notes">
+        @for (note of res.notices; track $index) {
+          <li>{{ note }}</li>
+        }
+      </ul>
+    }
+    <!-- Skills -->
+    @if (showSkills && res.skills; as s) {
+      <div class="details reveal">
+        <div class="details__block">
+          <div class="details__bar">
+            <h3 class="details__title">Skills incorporadas</h3>
+            @if (s.selected.length && pathFormPlacement !== 'skills') {
+              <button type="button" class="btn btn--quiet btn--small" (click)="copySkills(s.selected)">
                 {{ copiedKey === 'skills' ? 'Copiadas' : (s.selected.length === 1 ? 'Copiar skill' : 'Copiar skills') }}
               </button>
-            </div>
-
-            <ng-container *ngIf="pathFormPlacement === 'skills'; else skillList">
-              <ng-container *ngTemplateOutlet="pathForm"></ng-container>
-            </ng-container>
-
-            <ng-template #skillList>
-              <p class="details__warn" *ngIf="s.error">{{ s.error }} O prompt foi aprimorado sem skills.</p>
-
-              <ul class="skills" *ngIf="s.selected.length">
-                <li *ngFor="let skill of s.selected" class="skills__item">
-                  <div class="skills__head">
-                    <code class="skills__name">{{ skill.name }}</code>
-                    <span class="tag" [ngClass]="'tag--' + skill.scope">{{ scopeLabel[skill.scope] }}</span>
-                    <span class="skills__weak" *ngIf="skill.relevance === 'MEDIUM'">apoio</span>
-                    <button type="button" class="link skills__copy" [attr.aria-label]="'Copiar a skill ' + skill.name" (click)="copySkill(skill)">
-                      {{ copiedKey === 'skill:' + skill.name ? 'Copiada' : 'Copiar' }}
-                    </button>
-                  </div>
-                  <p class="skills__reason">{{ skill.reason }}</p>
-                </li>
+            }
+          </div>
+          @if (pathFormPlacement === 'skills') {
+            <ng-container *ngTemplateOutlet="pathForm"></ng-container>
+          } @else {
+            @if (s.error) {
+              <p class="details__warn">{{ s.error }} O prompt foi aprimorado sem skills.</p>
+            }
+            @if (s.selected.length) {
+              <ul class="skills">
+                @for (skill of s.selected; track skill.path) {
+                  <li class="skills__item">
+                    <div class="skills__head">
+                      <code class="skills__name">{{ skill.name }}</code>
+                      <span class="tag" [ngClass]="'tag--' + skill.scope">{{ scopeLabel[skill.scope] }}</span>
+                      @if (skill.relevance === 'MEDIUM') {
+                        <span class="skills__weak">apoio</span>
+                      }
+                      <button type="button" class="link skills__copy" [attr.aria-label]="'Copiar a skill ' + skill.name" (click)="copySkill(skill)">
+                        {{ copiedKey === 'skill:' + skill.name ? 'Copiada' : 'Copiar' }}
+                      </button>
+                    </div>
+                    <p class="skills__reason">{{ skill.reason }}</p>
+                  </li>
+                }
               </ul>
-
-              <p class="copy-fail" *ngIf="copyFailedKey?.startsWith('skill')" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
-
-              <p class="details__empty" *ngIf="!s.selected.length && !s.error">{{ s.noneReason }}</p>
-
-              <p class="details__foot">
-                {{ s.totalSkills }} {{ s.totalSkills === 1 ? 'skill lida' : 'skills lidas' }} em
-                <ng-container *ngIf="readRoots.length; else noRoots">
-                  <code *ngFor="let root of readRoots" class="path">{{ root }}</code>
-                </ng-container>
-                <ng-template #noRoots>nenhuma pasta existente</ng-template>.
-                <ng-container *ngIf="!s.manualPaths">Projeto detectado: <code class="path">{{ s.projectDir }}</code>.</ng-container>
-                <ng-container *ngIf="s.warnings.length">{{ s.warnings.length }} {{ s.warnings.length === 1 ? 'aviso' : 'avisos' }} de leitura.</ng-container>
-                <button type="button" class="link" (click)="openPathForm()">Usar outra pasta</button>
-              </p>
-              <p class="details__warn" *ngIf="s.selector === 'heuristic' && !isDemo">
+            }
+            @if (copyFailedKey?.startsWith('skill')) {
+              <p class="copy-fail" role="status">Não foi possível copiar. Selecione o texto e copie manualmente.</p>
+            }
+            @if (!s.selected.length && !s.error) {
+              <p class="details__empty">{{ s.noneReason }}</p>
+            }
+            <p class="details__foot">
+              {{ s.totalSkills }} {{ s.totalSkills === 1 ? 'skill lida' : 'skills lidas' }} em
+              @if (readRoots.length) {
+                @for (root of readRoots; track $index) {
+                  <code class="path">{{ root }}</code>
+                }
+              } @else {nenhuma pasta existente}.
+              @if (!s.manualPaths) {Projeto detectado: <code class="path">{{ s.projectDir }}</code>.}
+              @if (s.warnings.length) {<ng-container>{{ s.warnings.length }} {{ s.warnings.length === 1 ? 'aviso' : 'avisos' }} de leitura.</ng-container>}
+              <button type="button" class="link" (click)="openPathForm()">Usar outra pasta</button>
+            </p>
+            @if (s.selector === 'heuristic' && !isDemo) {
+              <p class="details__warn">
                 Seleção feita por termos em comum, sem o agente. Configure o Vertex para a escolha pelo modelo.
               </p>
-            </ng-template>
-          </div>
+            }
+          }
         </div>
-      </ng-container>
-    </section>
-  </main>
+      </div>
+    }
+  }
+</section>
+</main>
 </div>
 
 <!-- Pasta das skills: pedida quando a detecção falha ou quando o usuário quer trocar -->
 <ng-template #pathForm>
   <form class="notice path-form reveal" (ngSubmit)="submitPath()">
     <p class="notice__title">{{ needsPath && !pathFormOpen ? 'Não encontrei as skills.' : 'Pasta das skills' }}</p>
-    <p class="notice__text" *ngIf="needsPath && result?.skills?.problem">{{ result?.skills?.problem }}</p>
+    @if (needsPath && result?.skills?.problem) {
+      <p class="notice__text">{{ result?.skills?.problem }}</p>
+    }
     <p class="notice__text">
       Informe o caminho da pasta onde as skills estão instaladas, dentro da sua home ou do projeto. O agente avalia todo SKILL.md dentro dela, em qualquer subpasta.
     </p>
@@ -301,13 +357,19 @@
       autocomplete="off"
       [placeholder]="pathPlaceholder"
       [(ngModel)]="pathDraft"
-    >
-    <p class="path-form__hint" *ngIf="!draft.trim()">Escreva o rascunho ao lado antes de avaliar a pasta.</p>
+      >
+    @if (!draft.trim()) {
+      <p class="path-form__hint">Escreva o rascunho ao lado antes de avaliar a pasta.</p>
+    }
 
     <div class="actions">
       <button type="submit" class="btn btn--primary" [disabled]="!pathDraft.trim() || !draft.trim() || state === 'loading'">Avaliar esta pasta</button>
-      <button type="button" class="btn btn--quiet" *ngIf="needsPath && !pathFormOpen" (click)="continueWithoutSkills()">Seguir sem skills</button>
-      <button type="button" class="btn btn--quiet" *ngIf="pathFormOpen" (click)="closePathForm()">Cancelar</button>
+      @if (needsPath && !pathFormOpen) {
+        <button type="button" class="btn btn--quiet" (click)="continueWithoutSkills()">Seguir sem skills</button>
+      }
+      @if (pathFormOpen) {
+        <button type="button" class="btn btn--quiet" (click)="closePathForm()">Cancelar</button>
+      }
     </div>
   </form>
 </ng-template>

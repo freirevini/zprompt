@@ -1,25 +1,23 @@
-import { NgFor } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 
 import { Option } from '../core/options';
 
 @Component({
   selector: 'zp-segmented',
-  standalone: true,
-  imports: [NgFor],
   template: `
     <div class="seg" [class.seg--wrap]="wrap" role="radiogroup" [attr.aria-labelledby]="labelledBy" [attr.aria-describedby]="describedBy || null">
-      <button
-        *ngFor="let option of options; let i = index"
-        type="button"
-        role="radio"
-        class="seg__option"
-        [class.is-on]="option.value === value"
-        [attr.aria-checked]="option.value === value"
-        [attr.tabindex]="option.value === value ? 0 : -1"
-        (click)="select(option.value)"
-        (keydown)="onKey($event, i)"
-      >{{ option.label }}</button>
+      @for (option of options; track option.value; let i = $index) {
+        <button
+          type="button"
+          role="radio"
+          class="seg__option"
+          [class.is-on]="option.value === value"
+          [attr.aria-checked]="option.value === value"
+          [attr.tabindex]="option.value === value ? 0 : -1"
+          (click)="select(option.value)"
+          (keydown)="onKey($event, i)"
+        >{{ option.label }}</button>
+      }
     </div>
   `,
   styles: [`

@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -26,8 +26,7 @@ const MAX_DRAFT = 8000;
 
 @Component({
   selector: 'zp-root',
-  standalone: true,
-  imports: [NgIf, NgFor, NgClass, NgTemplateOutlet, FormsModule, SegmentedComponent],
+  imports: [NgClass, NgTemplateOutlet, FormsModule, SegmentedComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
