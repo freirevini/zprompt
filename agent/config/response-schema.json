@@ -1,0 +1,93 @@
+{
+  "type": "OBJECT",
+  "properties": {
+    "status": {
+      "type": "STRING",
+      "enum": ["ENHANCED", "UNCHANGED", "INSUFFICIENT"],
+      "description": "ENHANCED quando reescrito; UNCHANGED quando o rascunho já atende; INSUFFICIENT quando não há pedido a um agente de código."
+    },
+    "reason": {
+      "type": "STRING",
+      "description": "Uma frase. Obrigatória para UNCHANGED e INSUFFICIENT; vazia para ENHANCED."
+    },
+    "detectedFunction": {
+      "type": "STRING",
+      "enum": ["understand", "start", "implement", "fix", "review", "test", "keep-codebase-knowledge"]
+    },
+    "functionSource": {
+      "type": "STRING",
+      "enum": ["selected", "detected"]
+    },
+    "intentQuote": {
+      "type": "STRING",
+      "description": "Trecho literal do rascunho que expressa o objetivo."
+    },
+    "preservedLiterals": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" },
+      "description": "Literais do rascunho mantidos verbatim no prompt: caminhos, identificadores, erros, versões, URLs, comandos, código."
+    },
+    "recommendedMode": {
+      "type": "STRING",
+      "enum": ["agent", "plan", "ask"]
+    },
+    "routedToPlanning": {
+      "type": "BOOLEAN"
+    },
+    "modeInstruction": {
+      "type": "STRING",
+      "description": "Ação do desenvolvedor no IDE antes de enviar. Vazia quando não há."
+    },
+    "changes": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "change": { "type": "STRING" },
+          "basis": {
+            "type": "STRING",
+            "enum": ["draft", "configuration", "function_guide"]
+          }
+        },
+        "required": ["change", "basis"],
+        "propertyOrdering": ["change", "basis"]
+      }
+    },
+    "agentMustDetermine": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "prompt": {
+      "type": "STRING",
+      "description": "Texto final pronto para colar no chat do IDE, com prefixo quando houver rota no Antigravity."
+    }
+  },
+  "required": [
+    "status",
+    "reason",
+    "detectedFunction",
+    "functionSource",
+    "intentQuote",
+    "preservedLiterals",
+    "recommendedMode",
+    "routedToPlanning",
+    "modeInstruction",
+    "changes",
+    "agentMustDetermine",
+    "prompt"
+  ],
+  "propertyOrdering": [
+    "status",
+    "reason",
+    "detectedFunction",
+    "functionSource",
+    "intentQuote",
+    "preservedLiterals",
+    "recommendedMode",
+    "routedToPlanning",
+    "modeInstruction",
+    "changes",
+    "agentMustDetermine",
+    "prompt"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "zprompt-skills-selector",
+  "promptVersion": "1.2.0",
+  "schemaVersion": "1.0.0",
+  "profile": "classificacao",
+  "model": {
+    "idEnv": "GEMINI_SKILLS_MODEL",
+    "fallbackIdEnv": "GEMINI_MODEL",
+    "default": "gemini-3.8-flash",
+    "locationEnv": "VERTEX_LOCATION",
+    "defaultLocation": "global",
+    "verifiedAt": "2026-10-23"
+  },
+  "files": {
+    "systemInstruction": "agent/skills-selector/system-instruction.md",
+    "responseSchema": "agent/skills-selector/response-schema.json"
+  },
+  "generationConfig": {
+    "thinkingConfig": { "thinkingLevel": "MEDIUM" },
+    "maxOutputTokens": 32768,
+    "responseMimeType": "application/json"
+  },
+  "catalog": {
+    "charBudgetPerCall": 600000,
+    "maxParallelCalls": 4,
+    "onMaxTokens": "dividir o lote ao meio e repetir; bloqueio falha na hora, sem dividir"
+  },
+  "runtime": {
+    "timeoutSeconds": 60,
+    "networkRetries": 2,
+    "storeInteractions": false
+  }
+}

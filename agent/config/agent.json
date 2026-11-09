@@ -1,0 +1,53 @@
+{
+  "name": "zprompt-enhancer",
+  "promptVersion": "1.5.0",
+  "schemaVersion": "1.3.0",
+  "profile": "reescrita-de-prompt",
+  "model": {
+    "idEnv": "GEMINI_MODEL",
+    "default": "gemini-3.8-flash",
+    "locationEnv": "VERTEX_LOCATION",
+    "defaultLocation": "global",
+    "allowedLocations": ["global", "us", "eu"],
+    "stage": "GA",
+    "retiresNotBefore": "2027-09-02",
+    "verifiedAt": "2026-10-23"
+  },
+  "files": {
+    "systemInstruction": "agent/prompts/system-instruction.md",
+    "userTemplate": "agent/prompts/user-template.md",
+    "responseSchema": "agent/config/response-schema.json",
+    "requestSchema": "agent/config/request-schema.json",
+    "regressionCases": "agent/examples/casos.json"
+  },
+  "generationConfig": {
+    "thinkingConfig": { "thinkingLevel": "MEDIUM" },
+    "maxOutputTokens": 8192,
+    "responseMimeType": "application/json"
+  },
+  "runtime": {
+    "timeoutSeconds": 30,
+    "retries": 1,
+    "networkRetries": 2,
+    "deadlineSeconds": 150,
+    "storeInteractions": false
+  },
+  "postProcessing": {
+    "maxWordsDefault": 250,
+    "maxWordsStart": 350,
+    "maxWordsDiagnosis": 450,
+    "minWordsCeiling": 120,
+    "lengthMultiplier": 3,
+    "wordsPerSkill": 30,
+    "wordsCodebaseDocs": 60,
+    "antigravityRoutePrefix": "/plan /grill-me ",
+    "forbiddenPhrases": [
+      "pense passo a passo",
+      "think step by step",
+      "você é um especialista",
+      "you are an expert",
+      "não seja preguiçoso",
+      "don't be lazy"
+    ]
+  }
+}

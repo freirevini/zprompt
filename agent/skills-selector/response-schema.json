@@ -1,0 +1,21 @@
+{
+  "type": "OBJECT",
+  "properties": {
+    "selected": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "id": { "type": "STRING" },
+          "relevance": { "type": "STRING", "enum": ["HIGH", "MEDIUM"] },
+          "draftEvidence": { "type": "STRING" },
+          "skillEvidence": { "type": "STRING" },
+          "reason": { "type": "STRING" }
+        },
+        "required": ["id", "relevance", "draftEvidence", "skillEvidence", "reason"]
+      }
+    },
+    "noneReason": { "type": "STRING" }
+  },
+  "required": ["selected", "noneReason"]
+}

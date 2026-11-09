@@ -1,0 +1,19 @@
+{
+  "name": "zprompt-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Servidor local do zprompt: aprimora prompts com o agente no Vertex AI e escolhe skills instaladas.",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "node --test",
+    "eval": "node src/cli-eval.mjs",
+    "skills": "node src/cli-skills.mjs"
+  },
+  "engines": {
+    "node": ">=18.10"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.15.0"
+  }
+}

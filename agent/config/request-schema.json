@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnhanceRequest",
+  "description": "Contrato do frontend com POST /api/enhance. Sem campos de contexto: rascunho e configuração. O servidor escolhe as skills e chama o aprimorador.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["draft", "ide"],
+  "properties": {
+    "draft": { "type": "string", "minLength": 1, "maxLength": 8000 },
+    "ide": { "type": "string", "enum": ["cursor", "antigravity"] },
+    "function": {
+      "type": "string",
+      "enum": ["auto", "understand", "start", "implement", "fix", "review", "test", "keep-codebase-knowledge"],
+      "default": "auto"
+    },
+    "scope": { "type": "string", "enum": ["minimo", "ambicioso"], "default": "minimo" },
+    "autonomy": { "type": "string", "enum": ["perguntar", "decidir", "diagnosticar"], "default": "perguntar" },
+    "preserveBehavior": { "type": "boolean", "default": true },
+    "useSkills": {
+      "description": "Liga o agente seletor de skills (agent/skills-selector). Falha na leitura das skills não impede o aprimoramento.",
+      "type": "boolean",
+      "default": false
+    },
+    "skillPaths": {
+      "description": "Pastas de skills informadas na tela quando a detecção automática falha. Só pastas dentro da home, do projeto ou de ZPROMPT_SKILL_ROOTS.",
+      "type": "array",
+      "maxItems": 5,
+      "default": [],
+      "items": { "type": "string", "minLength": 1, "maxLength": 1024 }
+    }
+  }
+}
