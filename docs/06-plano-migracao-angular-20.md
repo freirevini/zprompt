@@ -457,6 +457,8 @@ npx ng build && npm test && grep -c "ngIf\|ngFor" src/app/app.component.html src
 ```
 Esperado: build ok, golden ok, `0` ocorrências. Repetir S3 a S11 do anexo A no navegador; console sem NG0955.
 
+Executado em 2026-11-09. O schematic quebrou linha dentro de 5 trechos de texto inline (contador de caracteres, "detectada", dica de skills, rodapé de skills), o que mudava espaços na tela ("caracteres . Encurte", "existente ."). Corrigido colando o conteúdo nas chaves do bloco (`@if (x) {texto}`). Verificação usada: o mesmo roteiro de 23 estados (20 com servidor, 3 com servidor desligado) rodado no Angular 15 (worktree da tag `angular-15`) e no 20, com hash de `innerText`, estrutura de elementos e atributos ARIA de `zp-root`: 23/23 iguais, depois desta tarefa e depois da 2.2. Build 275,20 kB.
+
 - [ ] **Step 5: Commit**
 
 ```bash
