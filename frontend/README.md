@@ -1,4 +1,4 @@
-# Frontend — Angular 15
+# Frontend — Angular 20
 
 Tela do zprompt. Envia rascunho e configuração ao servidor local em `server/`, que faz todo o pipeline. O navegador nunca fala com o Vertex.
 
@@ -11,12 +11,22 @@ cd server && npm install && npm start
 ```
 
 ```bash
-cd frontend && npm install && npm start
+nvm use && cd frontend && npm install && npm start
 ```
 
 Abre em `http://localhost:4200`; com a porta ocupada, `npx ng serve --port 56036`. O `ng serve` encaminha `/api` para o servidor pelo `proxy.conf.js`, na porta de `ZPROMPT_API_PORT` do ambiente ou do `.env` da raiz, padrão `4300`.
 
-Angular 15 pede Node da linha 18; versões mais novas funcionam com aviso.
+Angular 20.3.17 com Node 22.12.0, fixado no `.nvmrc` da raiz. O dev-server é o Vite do `@angular/build`; o build de produção sai em `dist/zprompt-web/browser/`.
+
+## Verificar
+
+```bash
+npm test        # 33 testes (Vitest pelo builder @angular/build:unit-test, experimental no Angular 20)
+npm run lint    # ESLint 9 com angular-eslint
+npx ng build    # build de produção com checagem estrita de templates
+```
+
+O golden da simulação local (`src/app/core/testing/mock-golden.ts`) trava o comportamento da demonstração. Mudou a simulação de propósito: `npx vitest run tools/gen-golden.spec.ts` regenera o golden. `npx vitest run` sem caminho também roda o gerador; use `npm test`.
 
 ## Configuração na tela
 
@@ -50,3 +60,7 @@ Angular 15 pede Node da linha 18; versões mais novas funcionam com aviso.
 | `src/app/core/mock-enhancer.ts` | Simulação simplificada das regras do agente, só para a demonstração |
 | `src/app/ui/segmented.component.ts` | Seletor acessível com setas do teclado |
 | `src/app/app.component.*` | Tela única |
+| `src/app/**/*.spec.ts` | Testes ao lado de cada arquivo |
+| `src/app/core/testing/` | Casos e golden da simulação local |
+| `tools/gen-golden.spec.ts` | Gerador do golden |
+| `eslint.config.js` | Regras de lint |

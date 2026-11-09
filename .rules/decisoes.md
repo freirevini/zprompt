@@ -33,7 +33,7 @@
 
 ## 2026-11-05 — Frontend
 
-- Angular 15, escolha do usuário. Versão fora de suporte desde maio de 2024 e dependente de Node 14, 16 ou 18, todos fora de suporte. Registrado como risco aceito.
+- Angular 15, escolha do usuário. Versão fora de suporte desde maio de 2024 e dependente de Node 14, 16 ou 18, todos fora de suporte. Registrado como risco aceito. Superado em 2026-11-09 pelo chassi Angular 20.3.17 (entrada abaixo).
 - Frontend nunca chama o Vertex direto; passa por backend.
 
 ## 2026-11-06 — Pipeline real e validação
@@ -70,3 +70,18 @@
 ## 2026-11-09 — Sem rascunhos de exemplo na tela
 
 - Removida a linha "Testar com" e seus sete rascunhos de exemplo. Os mesmos rascunhos seguem como casos de regressão em `agent/examples/casos.json`.
+
+## 2026-11-09 — `docs/codebase/` sempre atualizado
+
+- Regra em `AGENTS.md`: mudança em código, configuração, dependência, comando, estrutura ou testes atualiza no mesmo trabalho a seção afetada de `docs/codebase/`. Mapa de mudança para documento e modo de atualizar em `.rules/docs-codebase.md`.
+
+## 2026-11-09 — Chassi Angular 20.3.17
+
+- Frontend migrado de Angular 15.2 para Angular 20.3.17, Node 22.12.0, TypeScript 5.9.3, ESLint 9.33.0 e RxJS 7.8.2, escolha do dono. Plano e registro de cada etapa em `docs/06-plano-migracao-angular-20.md`; ponto de retorno na tag `angular-15`.
+- Aprovado como proposto (D1 a D10): chassi novo no lugar de `ng update` encadeado; versões fixas sem `^` (20.3.17, mesmo com 20.3.35 publicado); `.nvmrc` com 22.12.0 na raiz e `engines` `^22.12.0` na tela, servidor segue `>=18.10`; zone.js mantido, sem zoneless nem signals; testes com Vitest pelo builder `@angular/build:unit-test`; nomes `app.component.*` mantidos; control flow `@if`/`@for`; `inject()`; `@angular/animations` e `@angular/platform-browser-dynamic` removidos.
+- Mudou de fato: builder `@angular/build:application` (esbuild, dev-server Vite), saída em `dist/zprompt-web/browser/`; orçamento de estilo por componente mantido em 14 kB / 24 kB, porque o padrão do Angular 20 (8 kB de erro) quebraria o build; `logLevel` saiu de `proxy.conf.js`.
+- Fidelidade: o DOM da tela foi comparado com o do Angular 15 em 23 estados, iguais em texto, estrutura e atributos de acessibilidade; golden de 48 casos da simulação local igual; checklist de tela S1 a S14 igual nas duas versões.
+- Testes da tela: 33. Contorno do builder experimental: specs fora de `app.component.spec.ts` não importam valores de `core/options.ts`. Se o problema voltar, trocar para `@angular/build:karma`.
+- Lint sem exceções: nenhuma regra desligada nem `eslint-disable`.
+- Fora do escopo: signals, zoneless, Prettier, router, favicon e `public/`, nomes no estilo v20, Angular 21 ou 22, e os dois desvios de tela que já existiam no Angular 15 (texto "Escolha um exemplo à esquerda" e topbar desligada até o primeiro pedido).
+- Risco: a linha 20 do Angular sai do suporte LTS em novembro de 2026. O salto para 21 ou 22 precisa de plano próprio.

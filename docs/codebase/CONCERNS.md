@@ -1,26 +1,25 @@
 # Pontos de atenção
 
-Não há histórico git, então não existe sinal de churn. O código de produção não tem nenhum `TODO`, `FIXME` ou `HACK` (busca em `server/src`, `frontend/src` e `agent`). Os itens abaixo vêm da leitura do código e do terminal.
+O histórico git começou em 2026-11-09 e ainda não dá sinal de churn. O código de produção não tem nenhum `TODO`, `FIXME` ou `HACK` (busca em `server/src`, `frontend/src` e `agent`). Os itens abaixo vêm da leitura do código e do terminal.
 
 ## 1) Riscos principais
 
 | Severidade | Ponto | Evidência | Impacto | Ação sugerida |
 |------------|-------|-----------|---------|---------------|
 | Alta | Prompt e lint nunca foram validados contra o modelo real | `agent/examples/casos.json`; saída do `npm run eval` em 2026-11-06: 1 ok, 12 pulados; sem `.env` | Instrução, schema e lint podem rejeitar respostas boas (`LINT_FAILED`) ou aceitar ruins | Criar `.env`, rodar `npm run eval`, ajustar |
-| Média | Sem controle de versão | scan: "No commits found" | Nenhum histórico para desfazer mudanças; a cópia anterior é temporária | `git init` local; [ASK USER] |
 | Média | Seleção heurística aceita palavras comuns | `server/src/selector.mjs`, lista `STOP`; teste na tela em 2026-11-09 escolheu `security-gemini-prompt` por "antes, cada" | Skills irrelevantes entram no prompt quando o Vertex está desligado | Ampliar a lista de palavras ignoradas em português |
-| Média | Sem marcador, o projeto vira a pasta de execução | `server/src/locate.mjs:6,33`; `/api/health` devolve `.../Zprompt/server` | Skills do projeto são procuradas em `server/.cursor` | Definir `ZPROMPT_PROJECT_DIR` quando houver projeto; [ASK USER] sobre o comportamento sem marcador |
-| Baixa | Angular 15 em Node 26 | `frontend/package.json`, `node -v` | Fora de suporte; atualização do Node pode quebrar o build | `.nvmrc` com Node 18 ou migrar o Angular; [ASK USER] |
+| Média | Projeto detectado pelo primeiro marcador acima da pasta de execução | `server/src/locate.mjs:6,33`; com `.git` na raiz, `resolveProjectDir` devolve o próprio Zprompt | Skills de projeto vêm do Zprompt, não do projeto em que você trabalha | Definir `ZPROMPT_PROJECT_DIR` quando houver projeto; [ASK USER] sobre o comportamento sem marcador |
+| Baixa | Angular 20 sai do suporte LTS em novembro de 2026; versões fixas em 20.3.17 (já existe 20.3.35) | `frontend/package.json`, `.rules/decisoes.md` | Correções de segurança param de chegar | Plano próprio para Angular 21 ou 22 |
+| Baixa | Builder de testes `@angular/build:unit-test` é experimental no Angular 20 | `frontend/angular.json`; Tarefa 4.4 do plano | Já exigiu contorno (chunk compartilhado entre specs) | Fallback `@angular/build:karma` se voltar; estável no Angular 21 |
 
 ## 2) Dívida técnica
 
 | Item | Por que existe | Onde | Risco | Correção sugerida |
 |------|----------------|------|-------|-------------------|
-| Demonstração duplica regras do aprimorador | Tela precisava funcionar sem Vertex | `frontend/src/app/core/mock-enhancer.ts` (433 linhas) | Diverge da instrução real em silêncio | Manter rotulada; testar ou reduzir |
+| Demonstração duplica regras do aprimorador | Tela precisava funcionar sem Vertex | `frontend/src/app/core/mock-enhancer.ts` (438 linhas) | Diverge da instrução real em silêncio | Manter rotulada; testar ou reduzir |
 | Descrições das opções resumem a instrução | Explicar cada seleção na tela | `frontend/src/app/core/options.ts` (`FUNCTION_HINT` e afins) | Tela promete um comportamento que o prompt não tem | Revisar junto com cada mudança de `system-instruction.md` |
-| Componente único com todo o estado | Tela de uma página | `frontend/src/app/app.component.ts` (358), `.scss` (805) | Mudanças concentradas num arquivo | Extrair blocos (skills, resultado) quando crescer |
-| Sem linter nem formatador | Não configurado | raiz, `server/`, `frontend/` | Estilo depende de disciplina | ESLint e Prettier, se o dono quiser |
-| Tela sem testes | Sem alvo `test` | `frontend/angular.json` | Regressão visual e de fluxo só aparece no navegador | [ASK USER] |
+| Componente único com todo o estado | Tela de uma página | `frontend/src/app/app.component.ts` (357), `.scss` (805) | Mudanças concentradas num arquivo | Extrair blocos (skills, resultado) quando crescer |
+| Servidor sem linter; nenhum formatador | ESLint só foi configurado na tela | `server/`, raiz | Estilo do servidor depende de disciplina | ESLint no servidor e Prettier, se o dono quiser |
 
 ## 3) Segurança
 
@@ -43,18 +42,15 @@ Não há histórico git, então não existe sinal de churn. O código de produç
 
 | Área | Por que é frágil | Sinal | Como mexer |
 |------|------------------|-------|------------|
-| `server/src/lint.mjs` | Expressões regulares que decidem se o prompt é entregue; `ERROR_RE` já foi reescrita por falso positivo | Histórico em `docs/05-revisao-arquitetura.md` 5.12 (sem git) | Teste de regressão em `lint.test.mjs` antes de cada mudança |
+| `server/src/lint.mjs` | Expressões regulares que decidem se o prompt é entregue; `ERROR_RE` já foi reescrita por falso positivo | Histórico em `docs/05-revisao-arquitetura.md` 5.12 | Teste de regressão em `lint.test.mjs` antes de cada mudança |
 | `agent/prompts/system-instruction.md` com `lint.mjs` | Limites de palavras e regras duplicadas entre o texto do prompt e o código | `agent/config/agent.json` `postProcessing` | Mudar os dois juntos, subir `promptVersion`, rodar `npm run eval` |
 | `mock-enhancer.ts` e `options.ts` | Cópia das regras para a demonstração e resumo delas nas descrições | Item 2 | Conferir na tela depois de mudar a instrução |
 
 ## 6) Perguntas para o dono [ASK USER]
 
-1. [ASK USER] Inicializar git local agora? O repositório no GitHub segue como decisão sua.
-2. [ASK USER] Sem marcador de projeto, o servidor deve usar a pasta de execução, como hoje, ou não ler skills de projeto?
-3. [ASK USER] Fixar Node 18 com `.nvmrc` para o Angular 15, ou aceitar Node 26?
-4. [ASK USER] Restringir a origem aceita à porta do `ng serve`, para que outros apps locais não chamem a API?
-5. [ASK USER] A tela deve ganhar testes automatizados?
-6. [ASK USER] Decisões pendentes da revisão: D1 (sonda do projeto), D3 (modelo que vai executar), D4 ("Executar relatório aprovado"), D6 (chips de skills).
+1. [ASK USER] Sem `ZPROMPT_PROJECT_DIR`, o servidor deve usar o primeiro marcador acima da pasta de execução, como hoje, ou não ler skills de projeto?
+2. [ASK USER] Restringir a origem aceita à porta do `ng serve`, para que outros apps locais não chamem a API?
+3. [ASK USER] Decisões pendentes da revisão: D1 (sonda do projeto), D3 (modelo que vai executar), D4 ("Executar relatório aprovado"), D6 (chips de skills).
 
 ## 7) Evidência
 

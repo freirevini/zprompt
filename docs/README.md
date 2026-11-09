@@ -14,6 +14,7 @@ Aprimorador de prompts focado em IDEs com IA (Cursor, Antigravity e afins). Benc
 ## Revisões
 
 - [`05-revisao-arquitetura.md`](05-revisao-arquitetura.md) — revisão de arquitetura, lógica e código de 2026-11-06, com roteiro priorizado e decisões.
+- [`06-plano-migracao-angular-20.md`](06-plano-migracao-angular-20.md) — diagnóstico e plano executado de 2026-11-09: frontend de Angular 15 para 20.3.17, com registro de cada etapa.
 
 ## Mapa do código
 

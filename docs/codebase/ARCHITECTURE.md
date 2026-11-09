@@ -50,9 +50,9 @@ tela (app.component) -> HttpEnhanceApi POST /api/enhance -> guarda + validação
 
 ## 5) Riscos de arquitetura
 
-- `app.component.ts` (358 linhas) concentra todo o estado e o `.scss` do componente tem 805 linhas: toda mudança de tela passa pelo mesmo arquivo.
-- A demonstração reimplementa regras do aprimorador em `mock-enhancer.ts` (433 linhas), e as descrições das opções em `options.ts` resumem a mesma instrução. As duas podem divergir de `agent/prompts/system-instruction.md` sem que nenhum teste perceba.
-- Sem marcador de projeto (`.cursor`, `.gemini`, `.agents`, `.agent`, `.git`), o projeto vira a pasta de execução. Hoje o `/api/health` informa `.../Zprompt/server`.
+- `app.component.ts` (357 linhas) concentra todo o estado e o `.scss` do componente tem 805 linhas: toda mudança de tela passa pelo mesmo arquivo.
+- A demonstração reimplementa regras do aprimorador em `mock-enhancer.ts` (438 linhas), e as descrições das opções em `options.ts` resumem a mesma instrução. O golden trava o comportamento da demonstração, mas nenhum teste compara as duas com `agent/prompts/system-instruction.md`.
+- O projeto é detectado subindo até um marcador (`.cursor`, `.gemini`, `.agents`, `.agent`, `.git`); sem marcador, vira a pasta de execução. Com o `.git` na raiz, o servidor iniciado em `server/` passa a ler skills do próprio Zprompt (`resolveProjectDir` em 2026-11-09: `subiu até .git`).
 
 ## 6) Evidência
 

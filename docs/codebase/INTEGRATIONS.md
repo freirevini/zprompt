@@ -6,7 +6,7 @@
 |---------|------|----------|--------------|-------------|-----------|
 | Vertex AI `generateContent` (modelo de `GEMINI_MODEL`, padrão `gemini-3.8-flash`) | API HTTPS | Aprimorador e seletor de skills | OAuth via `google-auth-library` (ADC ou `GOOGLE_APPLICATION_CREDENTIALS`), escopo `cloud-platform` | Alta: sem ela só há demonstração | `server/src/vertex.mjs:65,93`, `agent/config/agent.json` |
 | Sistema de arquivos local (`~/.cursor`, `~/.gemini`, pastas do projeto, `ZPROMPT_SKILL_ROOTS`) | Leitura de disco | Catálogo de `SKILL.md` | Permissões do usuário; caminhos restritos à home, ao projeto ou às raízes extras | Média: falha vira aviso | `server/src/locate.mjs`, `scan.mjs` |
-| Servidor local `127.0.0.1:4300` | HTTP interno | Tela chama pelo proxy do `ng serve` | Guarda de Host/Origin e cabeçalho `x-zprompt` | Alta para a tela | `frontend/proxy.conf.js`, `server/src/http.mjs` |
+| Servidor local `127.0.0.1:4300` | HTTP interno | Tela chama pelo proxy do `ng serve` (Vite; responde 500 quando o servidor está desligado, e a tela mostra "servidor local não respondeu") | Guarda de Host/Origin e cabeçalho `x-zprompt` | Alta para a tela | `frontend/proxy.conf.js`, `server/src/http.mjs` |
 
 Host do Vertex: `aiplatform.googleapis.com` em `global`; `aiplatform.{us,eu}.rep.googleapis.com` em `us` e `eu`; `VERTEX_API_HOST` sobrescreve (`vertexHost`, `vertex.mjs:22`).
 

@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** executado em 2026-11-09, Etapas 0 a 5, branch `migracao-angular-20`.
+
 **Goal:** Trocar o chassi de `frontend/` de Angular 15.2 / TypeScript 4.9 / webpack para Angular 20.3.17 / Node 22.12.0 / TypeScript 5.9.3 / ESLint 9.33.0 / RxJS 7.8.2, sem mudar nenhum comportamento visível da tela nem o contrato com `server/`.
 
 **Architecture:** Chassi novo gerado a partir dos padrões do `ng new` 20.3.17 (builder `@angular/build:application`, esbuild/Vite) com os 7 arquivos-fonte atuais portados sem alteração; depois, só as migrações que o Angular 20 exige ou recomenda com schematic oficial (control flow, `inject()`); lint e testes entram como rede de regressão. Comportamento é fixado antes de mexer: golden da simulação local (`mock-enhancer.ts`) e checklist de tela executados em Angular 15 e repetidos em Angular 20.
@@ -664,22 +666,24 @@ Pré-condição: `cd server && npm start` sem `.env` (Vertex desligado); `cd fro
 
 | # | Ação | Esperado | Angular 15 | Angular 20 |
 |---|---|---|---|---|
-| S1 | Abrir a tela | Topbar "Demonstração: Vertex não configurado" | ok | |
-| S2 | Estado inicial | "O prompt reescrito aparece aqui, pronto para colar no Cursor ou no Antigravity." | ok | |
-| S3 | Digitar `o login quebra depois de um tempo, arruma` → Aprimorar | Bloco "Demonstração"; Função "Corrigir erro, detectada"; Modo "Agent"; editor com prompt; "Copiar prompt" → "Copiado" por ~2 s | ok | |
-| S4 | Digitar `oi` → Aprimorar | "Nada para aprimorar ainda." | ok | |
-| S5 | Colar o rascunho "Já específico" de `mock-cases.ts` → Aprimorar | "Este rascunho já está pronto para enviar." e texto do rascunho | ok | |
-| S6 | IDE Antigravity, digitar `quero criar um app pra controlar despesas da república` → Aprimorar | prompt começa com `/plan /grill-me`; instrução sobre `/plan /grill-me` visível | ok | |
-| S7 | Editar o prompt gerado | "Desfazer edições" aparece; clicar restaura o texto | ok | |
-| S8 | `Cmd+Enter` (ou `Ctrl+Enter`) no rascunho | Envia | ok | |
-| S9 | Colar 7 001 e depois 8 001 caracteres | Contador aparece; acima de 8 000 fica vermelho, borda vermelha, botão desabilitado | ok | |
-| S10 | Ligar "Incorporar skills" → "Informar pasta manualmente" → pasta inexistente → Avaliar | Formulário no topo antes do resultado; depois "Não encontrei as skills." no bloco de skills; "Seguir sem skills" remove o bloco; trocar de IDE limpa a pasta | ok | |
-| S11 | Parar o servidor → Aprimorar | "O servidor local não respondeu. Inicie com npm start na pasta server."; "Ver demonstração sem servidor" → demo com "O servidor local está desligado."; topbar "Servidor local desligado" | ok | |
-| S12 | `npx ng build` | Sem aviso de orçamento; anotar tamanhos | 252,86 kB inicial | |
-| S13 | Janela < 960 px | Painéis empilham; borda superior no resultado | ok | |
-| S14 | Console durante S1–S11 | Nenhum erro `NG0…` nem exceção | ok | |
+| S1 | Abrir a tela | Topbar "Demonstração: Vertex não configurado" | ok | ok |
+| S2 | Estado inicial | "O prompt reescrito aparece aqui, pronto para colar no Cursor ou no Antigravity." | ok | ok |
+| S3 | Digitar `o login quebra depois de um tempo, arruma` → Aprimorar | Bloco "Demonstração"; Função "Corrigir erro, detectada"; Modo "Agent"; editor com prompt; "Copiar prompt" → "Copiado" por ~2 s | ok | ok |
+| S4 | Digitar `oi` → Aprimorar | "Nada para aprimorar ainda." | ok | ok |
+| S5 | Colar o rascunho "Já específico" de `mock-cases.ts` → Aprimorar | "Este rascunho já está pronto para enviar." e texto do rascunho | ok | ok |
+| S6 | IDE Antigravity, digitar `quero criar um app pra controlar despesas da república` → Aprimorar | prompt começa com `/plan /grill-me`; instrução sobre `/plan /grill-me` visível | ok | ok |
+| S7 | Editar o prompt gerado | "Desfazer edições" aparece; clicar restaura o texto | ok | ok |
+| S8 | `Cmd+Enter` (ou `Ctrl+Enter`) no rascunho | Envia | ok | ok |
+| S9 | Colar 7 001 e depois 8 001 caracteres | Contador aparece; acima de 8 000 fica vermelho, borda vermelha, botão desabilitado | ok | ok |
+| S10 | Ligar "Incorporar skills" → "Informar pasta manualmente" → pasta inexistente → Avaliar | Formulário no topo antes do resultado; depois "Não encontrei as skills." no bloco de skills; "Seguir sem skills" remove o bloco; trocar de IDE limpa a pasta | ok | ok |
+| S11 | Parar o servidor → Aprimorar | "O servidor local não respondeu. Inicie com npm start na pasta server."; "Ver demonstração sem servidor" → demo com "O servidor local está desligado."; topbar "Servidor local desligado" | ok | ok |
+| S12 | `npx ng build` | Sem aviso de orçamento; anotar tamanhos | 252,86 kB inicial | 275,20 kB inicial, sem aviso |
+| S13 | Janela < 960 px | Painéis empilham; borda superior no resultado | ok | ok |
+| S14 | Console durante S1–S11 | Nenhum erro `NG0…` nem exceção | ok | ok |
 
 Execução Angular 15: 2026-11-09, Node 22.12.0, servidor sem `.env` na porta 4310 e `ng serve` na 4210 (`ZPROMPT_API_PORT=4310`), Chrome. S1–S14 ok; console sem erro nem aviso.
+
+Execução Angular 20: 2026-11-09, mesmo ambiente (Vite na 4210). S1–S14 ok; console sem erro nem aviso. Verificação completa: `npm run lint` sem apontamentos, `npm test` 33/33, `npx ng build` 275,20 kB sem aviso, servidor 42/42.
 
 Desvios pré-existentes (não corrigir neste plano):
 - Estado vazio ainda diz "Escolha um exemplo à esquerda ou escreva o seu rascunho." depois da remoção de "Testar com" (`app.component.html`, bloco `.empty`).

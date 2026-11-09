@@ -1,6 +1,6 @@
 # Convenções
 
-Nenhuma convenção é imposta por ferramenta: não há linter, formatador nem hook. O que segue é o padrão observado nos arquivos.
+Na tela, o ESLint (`frontend/eslint.config.js`) impõe parte das convenções; no servidor, nenhuma ferramenta impõe. Não há formatador nem hook. O resto é o padrão observado nos arquivos.
 
 ## 1) Nomes
 
@@ -20,8 +20,10 @@ Idioma: comentários, mensagens de erro, textos da tela e chaves do log em portu
 ## 2) Formatação e lint
 
 - Formatador: nenhum configurado. Estilo observado: 2 espaços, aspas simples, ponto e vírgula, vírgula final em listas multilinha.
-- Linter: nenhum. A checagem que existe é a do compilador: `strict`, `noImplicitReturns`, `noPropertyAccessFromIndexSignature`, `noImplicitOverride` e `strictTemplates` (`frontend/tsconfig.json`).
-- Comandos: `cd frontend && npx ng build`; `cd server && npm test`.
+- Linter: ESLint 9 só na tela, com as regras recomendadas de `@eslint/js`, `typescript-eslint` (`recommended` e `stylistic`) e `angular-eslint` (TypeScript, template e acessibilidade), seletores com prefixo `zp`. Nenhuma regra desligada. O compilador também checa: `strict`, `noImplicitReturns`, `noPropertyAccessFromIndexSignature`, `noImplicitOverride`, `strictTemplates` e `typeCheckHostBindings` (`frontend/tsconfig.json`).
+- Templates: blocos `@if`/`@for` (sem `*ngIf`/`*ngFor`); `@for` sempre com `track` por chave estável (`option.value`, `skill.path`) ou `$index` em listas de texto. Texto dentro de bloco inline fica colado nas chaves (`@if (x) {texto}`) para não mudar os espaços na tela.
+- Injeção de dependência com `inject()`, nunca pelo construtor.
+- Comandos: `cd frontend && npm run lint && npx ng build`; `cd server && npm test`.
 
 ## 3) Imports e módulos
 
@@ -47,6 +49,6 @@ Idioma: comentários, mensagens de erro, textos da tela e chaves do log em portu
 
 ## 6) Evidência
 
-- Lint e formatador: ausentes (seção de lint do scan).
+- Lint: `frontend/eslint.config.js`; formatador ausente.
 - `frontend/tsconfig.json`
 - `server/src/index.mjs`, `server/src/enhancer.mjs`, `server/src/text.mjs`, `frontend/src/app/core/enhance-api.ts`
