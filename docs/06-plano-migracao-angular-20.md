@@ -376,7 +376,7 @@ Saem, por serem padrão ou obsoletos no Angular 20: `baseUrl`, `outDir`, `forceC
   "extends": "./tsconfig.json",
   "compilerOptions": { "outDir": "./out-tsc/app", "types": [] },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "src/**/testing/**"]
+  "exclude": ["src/**/*.spec.ts", "src/**/testing/*.ts"]
 }
 ```
 `tsconfig.spec.json`:
@@ -384,7 +384,7 @@ Saem, por serem padrão ou obsoletos no Angular 20: `baseUrl`, `outDir`, `forceC
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "outDir": "./out-tsc/spec", "types": [] },
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/**/testing/**"]
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/**/testing/*.ts"]
 }
 ```
 
@@ -406,7 +406,7 @@ Esperado: `Angular CLI: 20.3.17`, `Angular: 20.3.17`, `TypeScript 5.9.3`, `rxjs 
 ```bash
 npx ng build
 ```
-Esperado: sucesso, saída em `dist/zprompt-web/browser/`, sem erro de orçamento. Anotar tamanhos no anexo A (S12). `NgIf`/`NgFor` ainda compilam; avisos de depreciação são aceitos até a Tarefa 2.1.
+Esperado: sucesso, saída em `dist/zprompt-web/browser/`, sem erro de orçamento. Anotar tamanhos no anexo A (S12). Executado em 2026-11-09: 280,17 kB inicial (main 243,98 kB, polyfills 34,59 kB, styles 1,61 kB), sem aviso. Correção na execução: `include` com `**` no fim dá TS5010; glob trocado para `src/**/testing/*.ts`. `NgIf`/`NgFor` ainda compilam; avisos de depreciação são aceitos até a Tarefa 2.1.
 
 - [ ] **Step 2: Golden no runner do Angular**
 
